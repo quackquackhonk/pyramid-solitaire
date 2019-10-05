@@ -1,11 +1,31 @@
 package cs3500.pyramidsolitaire.model.hw02;
 
 /**
- * Enumeration of all the Suits a {@Code Card} can have. Suit.Empty means that the card has been
- * played and should not be rendered or used by functions as an actual card.
+ * Enumeration of all the Suits a {@Code Card} can have.
  */
 public enum Suit {
 
-  Clubs, Hearts, Spades, Diamonds, Empty
+  Spades, Hearts, Diamonds, Clubs;
+
+  String clubChar = "♣";
+  String diamondChar = "♦";
+  String heartChar = "♥";
+  String spadeChar = "♠";
+
+  @Override
+  public String toString() {
+    switch(this) {
+      case Clubs:
+        return "♣";
+      case Hearts:
+        return "♥";
+      case Spades:
+        return "♠";
+      case Diamonds:
+        return "♦";
+      default:
+        return " ";
+    }
+  }
 
 }

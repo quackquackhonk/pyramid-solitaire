@@ -20,6 +20,12 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
   private ArrayList<Integer> indiciesDealt;
   private boolean ignoreOrder;
 
+  private final int SUM_TO_REMOVE = 13;
+  private final int NUM_CARDS_IN_DECK = 52;
+  private final int MIN_ROWS = 1;
+  private final int MAX_ROWS = 9;
+  private final int MIN_DRAW = 0;
+
 
   /**
    * Constructs a new Pyramid Solitaire Game. Only a deck of cards will be created.
@@ -42,17 +48,9 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
   @Override
   public List<Card> getDeck() {
     List<Card> d = new ArrayList<Card>();
-    for (int s = 0; s < 4; s++) {
-      for (int i = 1; i <= 13; i++) {
-        if (s == 0) {
-          d.add(new Card(i, Suit.Spades));
-        } else if (s == 1) {
-          d.add(new Card(i, Suit.Hearts));
-        } else if (s == 2) {
-          d.add(new Card(i, Suit.Diamonds));
-        } else if (s == 3) {
-          d.add(new Card(i, Suit.Clubs));
-        }
+    for (Suit s : Suit.values()) {
+      for (CardValue v : CardValue.values()) {
+        d.add(new RealCard(v, s));
       }
     }
 
@@ -62,14 +60,14 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
   @Override
   public void startGame(List<Card> deck, boolean shouldShuffle, int numRows, int numDraw) {
 
-    if (numRows < 1 || numDraw < 0) {
+    if (numRows < MIN_ROWS || numRows > MAX_ROWS || numDraw < MIN_DRAW) {
       throw new IllegalArgumentException("Invalid arguments");
     }
 
     if (!this.isDeckValid(deck)) {
       this.gameStarted = false;
       throw new IllegalArgumentException("Invalid Deck");
-    } 
+    }
 
     this.gameStarted = true;
     this.ignoreOrder = shouldShuffle;
@@ -118,12 +116,15 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
 
     Card c1 = this.getCardAt(row1, card1);
     Card c2 = this.getCardAt(row2, card2);
+    boolean c1Visiblity = this.noCardsBeneath(row1, card1);
+    boolean c2Visiblity = this.noCardsBeneath(row2, card2);
 
-    if (!c1.getVisibility() || !c2.getVisibility()) {
+    // both cards need to be empty
+    if (!c1Visiblity || !c2Visiblity) {
       throw new IllegalArgumentException("Both cards are not visible");
     }
 
-    if (!c1.canCombine(c2)) {
+    if (!this.canCombine(c1, c2)) {
       throw new IllegalArgumentException("Sum of the cards is not 13");
     }
 
@@ -139,12 +140,12 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
 
     Card c = this.getCardAt(row, card);
 
-    if (!c.getVisibility()) {
+    if (!this.noCardsBeneath(row, card)) {
       throw new IllegalArgumentException("Card is not visible.");
     }
 
-    if (c.getValue() != 13) {
-      throw new IllegalArgumentException("Card value is not 13");
+    if (c.getIntegerValue() != SUM_TO_REMOVE) {
+      throw new IllegalArgumentException("Card value is not " + SUM_TO_REMOVE);
     }
 
     discard(row, card);
@@ -159,7 +160,7 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
       throw new IllegalArgumentException("Draw index out of range");
     }
 
-    if (this.drawPile.get(drawIndex).isEmpty()) {
+    if (this.isEmpty(this.drawPile.get(drawIndex))) {
       throw new IllegalArgumentException("No Card there!");
     }
 
@@ -170,7 +171,7 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
       throw new IllegalArgumentException("Card not visible");
     }
 
-    if (!c1.canCombine(c2)) {
+    if (!this.canCombine(c1, c2)) {
       throw new IllegalArgumentException("Sum of the cards is not 13");
     }
 
@@ -190,12 +191,12 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
       throw new IllegalArgumentException("Draw index out of range");
     }
 
-    if (this.drawPile.get(drawIndex).isEmpty()) {
+    if (this.isEmpty(this.drawPile.get(drawIndex))) {
       throw new IllegalArgumentException("No card there!");
     }
 
-    if (cardToDealNext > 51) {
-      this.drawPile.set(drawIndex, new Card());
+    if (cardToDealNext >= NUM_CARDS_IN_DECK) {
+      this.drawPile.set(drawIndex, new EmptyCard());
     } else {
       this.drawPile.set(drawIndex, this.deal());
     }
@@ -223,7 +224,7 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
 
     for (int i = 0; i < this.drawPile.size(); i++) {
       Card c = this.drawPile.get(i);
-      if (!(c.isEmpty())) {
+      if (!this.isEmpty(c)) {
         numCards++;
       }
     }
@@ -253,28 +254,33 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
     }
 
     // list of all cards playable by the player
-    ArrayList<Card> playableCards = new ArrayList<Card>();
+    ArrayList<RealCard> playableCards = new ArrayList<RealCard>();
     for (int r = 0; r < this.getNumRows(); r++) { // row loop
       for (int i = 0; i < this.getRowWidth(r); i++) { // card loop
         Card c = this.getCardAt(r, i);
 
         if (c != null && c.getVisibility()) {
-          playableCards.add(c);
+          playableCards.add((RealCard) c);
         }
 
       }
     }
 
-    playableCards.addAll(this.getDrawCards());
+    // add all the playable cards from the draw pile into the list
+    for (Card c : this.getDrawCards()) {
+      if (!this.isEmpty(c)) {
+        playableCards.add((RealCard) c);
+      }
+    }
 
     for (int x = 0; x < playableCards.size(); x++) { // loop through cards
-      Card cx = playableCards.get(x);
-      if (cx.getValue() == 13) {
+      RealCard cx = playableCards.get(x);
+      if (cx.getIntegerValue() == SUM_TO_REMOVE) {
         return false;
       }
 
       for (int y = x; y < playableCards.size(); y++) {
-        Card cy = playableCards.get(y);
+        RealCard cy = playableCards.get(y);
 
         if (cx.canCombine(cy)) {
           return false;
@@ -304,7 +310,7 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
 
         Card c = this.getCardAt(r, i);
         if (c != null) {
-          score += c.getValue();
+          score += c.getIntegerValue();
         }
 
       }
@@ -319,7 +325,7 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
 
     Card c = this.board.get(row).get(card);
 
-    if (c.isEmpty()) {
+    if (this.isEmpty(c)) {
       return null;
     }
 
@@ -333,15 +339,18 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
       throw new IllegalStateException("Game not started!");
     }
 
+    /*
     ArrayList<Card> returnList = new ArrayList<Card>();
 
     for (Card c : this.drawPile) {
-      if (!(c.isEmpty())) {
-        returnList.add(c.copy());
+      if (!(this.isEmpty(c))) {
+        returnList.add(this.copy(c));
       }
     }
 
     return returnList;
+    */
+    return this.drawPile;
   }
 
   /**
@@ -362,7 +371,7 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
     }
 
     // sets the card to an empty card
-    this.board.get(row).set(card, new Card());
+    this.board.get(row).set(card, new EmptyCard());
 
     // updates the visibility of all the cards on the board
     this.updateVisibility();
@@ -390,9 +399,11 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
       for (int i = 0; i < this.getRowWidth(r); i++) {
         if (this.noCardsBeneath(r, i)) {
           Card c = this.getCardAt(r, i);
-          Card visibleC = c.copy();
-          visibleC.makeVisible();
-          this.board.get(r).set(i, visibleC);
+          if (!this.isEmpty(c)) {
+            RealCard visibleC = (RealCard) this.copy(c);
+            visibleC.makeVisible();
+            this.board.get(r).set(i, visibleC);
+          }
         }
       }
     }
@@ -483,17 +494,17 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
       throw new IllegalStateException("Game not started");
     }
 
-    if (cardToDealNext > 51) {
-      return new Card();
+    if (cardToDealNext >= NUM_CARDS_IN_DECK) {
+      return new EmptyCard();
     }
 
     if (ignoreOrder) {
 
-      int cardIndex = rand.nextInt(51);
+      int cardIndex = rand.nextInt(NUM_CARDS_IN_DECK);
       nextCard = this.deck.get(cardIndex);
 
       while (indiciesDealt.contains(cardIndex)) {
-        cardIndex = rand.nextInt(51);
+        cardIndex = rand.nextInt(NUM_CARDS_IN_DECK);
         nextCard = this.deck.get(cardIndex);
       }
 
@@ -504,8 +515,70 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
     }
 
     cardToDealNext++;
-    return nextCard.copy();
+    return this.copy(nextCard);
   }
 
+  /**
+   * Determines if the card is an empty Card.
+   *
+   * @param c the Card to check.
+   * @return if the suit is Empty and the value is -1, return true, else return false.
+   * @throws IllegalStateException if the game hasn't started yet.
+   */
+  boolean isEmpty(Card c) throws IllegalStateException{
+
+    if (!gameStarted) {
+      throw new IllegalStateException("Game not started!");
+    }
+
+    if (c.getValue() == null || c.getSuit() == null) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Copies all the data of the given Card into a new Card.
+   *
+   * @param c the Card to copy
+   * @return a copy of the Card.
+   * @throws IllegalStateException if the game hasn't started.
+   */
+  Card copy(Card c) throws IllegalStateException  {
+
+    if (!gameStarted) {
+      throw new IllegalStateException("Game not started!");
+    }
+
+    if (isEmpty(c)) {
+      return new EmptyCard();
+    }
+
+    return new RealCard(c.getValue(), c.getSuit());
+
+  }
+
+  /**
+   * Determines if the given cards have values that can be summed to equal the required removal
+   * value.
+   *
+   * @param c1 The first card.
+   * @param c2 The second card.
+   * @return can these two cards be combined?
+   * @throws IllegalStateException if the game hasn't started.
+   */
+  boolean canCombine(Card c1, Card c2) throws IllegalStateException {
+
+    if (!gameStarted) {
+      throw new IllegalStateException("Game not started!");
+    }
+
+    // cannot combine empty cards with anything
+    if (this.isEmpty(c1) || this.isEmpty(c2)) {
+      return false;
+    }
+
+    return c1.getIntegerValue() + c2.getIntegerValue() == SUM_TO_REMOVE;
+  }
 
 }
