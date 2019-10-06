@@ -105,6 +105,6 @@ public class PyramidSolitaireTextualView  implements PyramidSolitaireView {
 
   @Override
   public void render() throws IOException {
-
+    this.out.append(this.toString());
   }
 }
