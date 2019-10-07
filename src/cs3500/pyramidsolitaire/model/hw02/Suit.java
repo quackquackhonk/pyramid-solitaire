@@ -14,7 +14,7 @@ public enum Suit {
 
   @Override
   public String toString() {
-    switch(this) {
+    switch (this) {
       case Clubs:
         return "♣";
       case Hearts:

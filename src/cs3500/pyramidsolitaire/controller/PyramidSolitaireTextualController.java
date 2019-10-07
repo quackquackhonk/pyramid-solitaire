@@ -3,19 +3,27 @@ package cs3500.pyramidsolitaire.controller;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Scanner;
 
 import cs3500.pyramidsolitaire.model.hw02.PyramidSolitaireModel;
 import cs3500.pyramidsolitaire.view.PyramidSolitaireTextualView;
 import cs3500.pyramidsolitaire.view.PyramidSolitaireView;
 
+/**
+ * Controller for the PyramidSolitaire Game. Operates in a text based manner.
+ */
 public class PyramidSolitaireTextualController implements PyramidSolitaireController {
 
   private final Readable in;
   private final Appendable out;
   private PyramidSolitaireView view;
 
+  /**
+   * Constructs a Pyramid Solitaire Textual Controller.
+   * @param in the inputs from the user.
+   * @param out the outputs from the model.
+   * @throws IllegalArgumentException if either of the arguments are null.
+   */
   public PyramidSolitaireTextualController(Readable in, Appendable out)
           throws IllegalArgumentException {
     if (in == null) {
@@ -32,10 +40,18 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
 
 
   @Override
-  public <K> void playGame(PyramidSolitaireModel<K> model, List<K> deck, boolean shuffle, int numRows, int numDraw) {
+  public <K> void playGame(PyramidSolitaireModel<K> model, List<K> deck,
+                           boolean shuffle, int numRows, int numDraw) {
     // we need a model
-    Objects.requireNonNull(model);
-    model.startGame(deck, shuffle, numRows, numDraw);
+    if (model == null) {
+      throw new IllegalArgumentException("Model cannot be null");
+    }
+
+    try {
+      model.startGame(deck, shuffle, numRows, numDraw);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalStateException("Invalid game state.");
+    }
 
     // initialize view
     this.view = new PyramidSolitaireTextualView(model, this.out);
@@ -57,6 +73,7 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
         if (model.isGameOver()) {
           return;
         }
+        this.out.append("\n");
         this.out.append(String.format("Score: %d", model.getScore())).append("\n");
 
         switch (scan.next()) {
@@ -214,7 +231,7 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
     }
 
 
-    return check.toUpperCase().equals("Q") || isNumber;
+    return check.equalsIgnoreCase("Q") || isNumber;
   }
 
   /**
@@ -227,7 +244,8 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
     this.out.append("Game quit!" + "\n");
     this.out.append("State of the game when quit:" + "\n");
     this.view.render();
-    this.out.append(String.format("Score: %d", score) + "\n");
+    this.out.append("\n");
+    this.out.append(String.format("Score: %d", score));
 
   }
 
@@ -238,7 +256,7 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
    * @return are any of the Strings quit characters?
    */
   boolean isQuitCharacter(String s) {
-    return s.toUpperCase().equals("Q");
+    return s.equalsIgnoreCase("Q");
   }
 
   /**

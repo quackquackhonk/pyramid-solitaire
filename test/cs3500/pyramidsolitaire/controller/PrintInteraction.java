@@ -6,8 +6,15 @@ package cs3500.pyramidsolitaire.controller;
 public class PrintInteraction implements Interaction {
 
   String[] lines;
+
+  /**
+   * Constructs a simulated output from the view.
+   * @param lines the lines to be rendered.
+   */
   public PrintInteraction(String... lines) {
+
     this.lines = lines;
+
   }
 
 

@@ -146,7 +146,7 @@ public class BasicPyramidSolitaireTest {
     this.model.startGame(this.model.getDeck(), false, 9, 10);
     // since the pyramid has 55 slots, the last three should be empty
     assertEquals(9, this.model.getNumRows());
-    assertEquals(7, this.model.getNumDraw());
+    assertEquals(10, this.model.getNumDraw());
     assertEquals(new RealCard(CardValue.Ace, Suit.Spades), this.model.getCardAt(0, 0));
     assertEquals(294, this.model.getScore());
     assertFalse(this.model.isGameOver());
@@ -291,10 +291,6 @@ public class BasicPyramidSolitaireTest {
     assertEquals(new RealCard(CardValue.Ace, Suit.Hearts), this.model.getCardAt(4, 3));
     assertEquals(new RealCard(CardValue.Jack, Suit.Spades), this.model.getCardAt(4, 0));
     assertEquals(new RealCard(CardValue.Two, Suit.Hearts), this.model.getCardAt(4, 4));
-    // the cards above the cards to remove are not visible
-    assertFalse(this.model.getCardAt(3, 0).getVisibility());
-    assertFalse(this.model.getCardAt(3, 3).getVisibility());
-
     //remove the cards
     this.model.remove(4, 1, 4, 3);
     this.model.remove(4, 0, 4, 4);
@@ -304,10 +300,6 @@ public class BasicPyramidSolitaireTest {
     assertNull(this.model.getCardAt(4, 3));
     assertNull(this.model.getCardAt(4, 0));
     assertNull(this.model.getCardAt(4, 4));
-    // the cards above the removed cards are now visible
-    assertEquals(true, this.model.getCardAt(3, 0).getVisibility());
-    assertEquals(true, this.model.getCardAt(3, 3).getVisibility());
-
   }
 
   // 2 arg remove tests
@@ -366,19 +358,12 @@ public class BasicPyramidSolitaireTest {
 
     // check cards are there
     assertEquals(new RealCard(CardValue.King, Suit.Spades), this.model.getCardAt(4, 2));
-    // cards above are not visible
-    assertFalse(this.model.getCardAt(3, 1).getVisibility());
-    assertFalse(this.model.getCardAt(3, 2).getVisibility());
 
     // remove the card
     this.model.remove(4, 2);
 
     // poof! the card is gone
     assertEquals(null, this.model.getCardAt(4, 2));
-
-    // cards above are still not visible
-    assertEquals(false, this.model.getCardAt(3, 1).getVisibility());
-    assertEquals(false, this.model.getCardAt(3, 2).getVisibility());
   }
 
   // removeUsingDraw tests
@@ -451,9 +436,6 @@ public class BasicPyramidSolitaireTest {
     assertEquals(new RealCard(CardValue.Six, Suit.Spades), this.model.getCardAt(2, 2));
     assertEquals(new RealCard(CardValue.Seven, Suit.Spades), this.model.getDrawCards().get(0));
     assertEquals(new RealCard(CardValue.Eight, Suit.Spades), this.model.getDrawCards().get(1));
-
-    // card above is invisible
-    assertFalse(this.model.getCardAt(1, 1).getVisibility());
 
     // remove cards
     this.model.removeUsingDraw(1, 2, 1);
@@ -533,11 +515,11 @@ public class BasicPyramidSolitaireTest {
     this.model.discardDraw(4);
     this.model.discardDraw(5);
     this.model.discardDraw(6);
-    assertEquals(0, this.model.getNumDraw());
+    assertEquals(10, this.model.getNumDraw());
 
     // partially filled, partially empty
     this.model.startGame(this.model.getDeck(), false, 9, 10);
-    assertEquals(7, this.model.getNumDraw());
+    assertEquals(10, this.model.getNumDraw());
 
   }
 

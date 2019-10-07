@@ -3,11 +3,10 @@ package cs3500.pyramidsolitaire.model.hw02;
 /**
  * Represents a standard 52 Card playing Card.
  */
-public class RealCard implements Card{
+public class RealCard implements Card {
 
-  private CardValue value;
-  private Suit suit;
-  private boolean isVisible;
+  private final CardValue value;
+  private final Suit suit;
 
   /**
    * Creates a new Card with a specific suit and value. Defaults the visibility to false.
@@ -15,20 +14,10 @@ public class RealCard implements Card{
    * @param suit the suit of the card.
    */
   public RealCard(CardValue value, Suit suit) {
-    this(value, suit, false);
-  }
-
-  /**
-   * Creates a new Card with the specific suit, value, and visibility.
-   * @param value the value of the card
-   * @param suit the suit of the card
-   * @param isVisible the visiblity of the card
-   */
-  private RealCard(CardValue value, Suit suit, boolean isVisible) {
     this.value = value;
     this.suit = suit;
-    this.isVisible = isVisible;
   }
+
 
   @Override
   public String toString() {
@@ -58,11 +47,6 @@ public class RealCard implements Card{
   }
 
   @Override
-  public boolean getVisibility() {
-    return this.isVisible;
-  }
-
-  @Override
   public Suit getSuit() {
     return this.suit;
   }
@@ -87,20 +71,12 @@ public class RealCard implements Card{
     return this.value.getValue() + other.value.getValue() == 13;
   }
 
-
-  /**
-   * Makes a card visible.
-   */
-  void makeVisible() {
-    this.isVisible = true;
-  }
-
   /**
    * Returns a deep copy of this card.
    * @return a copy of this card
    */
   Card copy() {
-    return new RealCard(this.value, this.suit, this.isVisible);
+    return new RealCard(this.value, this.suit);
   }
 
 }

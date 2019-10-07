@@ -9,7 +9,7 @@ public enum CardValue {
 
   @Override
   public String toString() {
-    switch(this) {
+    switch (this) {
       case Ace:
         return "A";
       case Two:
@@ -42,12 +42,12 @@ public enum CardValue {
   }
 
   /**
-   * Returns a number value corresponding to the numeric value of this CardValue
+   * Returns a number value corresponding to the numeric value of this CardValue.
    *
    * @return the numeric value of this CardValue
    */
   public int getValue() {
-    switch(this) {
+    switch (this) {
       case Ace:
         return 1;
       case Two:

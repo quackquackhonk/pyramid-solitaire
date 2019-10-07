@@ -32,7 +32,7 @@ public class PyramidSolitaireTextualViewTest {
                          + "    J♠  Q♠  K♠  A♥  2♥\n"
                          + "  3♥  4♥  5♥  6♥  7♥  8♥\n"
                          + "9♥  10♥ J♥  Q♥  K♥  A♦  2♦\n"
-                         + "Draw: 3♦, 4♦, 5♦\n";
+                         + "Draw: 3♦, 4♦, 5♦";
     String removeKingView =  "            A♠\n"
                            + "          2♠  3♠\n"
                            + "        4♠  5♠  6♠\n"
@@ -40,7 +40,7 @@ public class PyramidSolitaireTextualViewTest {
                            + "    J♠  Q♠  K♠  A♥  2♥\n"
                            + "  3♥  4♥  5♥  6♥  7♥  8♥\n"
                            + "9♥  10♥ J♥  Q♥      A♦  2♦\n"
-                           + "Draw: 3♦, 4♦, 5♦\n";
+                           + "Draw: 3♦, 4♦, 5♦";
     assertEquals(startingView, view.toString());
     model.remove(6, 4);
     assertEquals(removeKingView, view.toString());

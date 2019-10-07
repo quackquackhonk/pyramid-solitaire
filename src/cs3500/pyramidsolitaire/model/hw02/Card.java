@@ -22,7 +22,7 @@ public interface Card {
   CardValue getValue();
 
   /**
-   * Gets the integer value of a card for use of arithmetic involving the value of the Card
+   * Gets the integer value of a card for use of arithmetic involving the value of the Card.
    *
    * @return the integer value associated with the value of the card.
    */
@@ -34,12 +34,4 @@ public interface Card {
    * @return the suit of the card.
    */
   Suit getSuit();
-
-  /**
-   * Checks if the card is visible or not.
-   *
-   * @return if the card is visible or not.
-   */
-  boolean getVisibility();
-
 }

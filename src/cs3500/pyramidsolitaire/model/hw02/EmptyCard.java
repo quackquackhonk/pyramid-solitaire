@@ -24,11 +24,6 @@ public class EmptyCard implements Card {
   }
 
   @Override
-  public boolean getVisibility() {
-    return true;
-  }
-
-  @Override
   public String toString() {
     return "  ";
   }
@@ -40,11 +35,7 @@ public class EmptyCard implements Card {
       return true;
     }
 
-    if (!(o instanceof EmptyCard)) {
-      return false;
-    }
-    // all empty cards are the same
-    return true;
+    return o instanceof EmptyCard;
   }
 
   @Override

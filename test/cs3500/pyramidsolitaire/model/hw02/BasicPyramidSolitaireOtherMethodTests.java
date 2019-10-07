@@ -64,37 +64,12 @@ public class BasicPyramidSolitaireOtherMethodTests {
     assertEquals(new RealCard(CardValue.Eight, Suit.Hearts), this.model.getCardAt(5, 5));
     assertEquals(new RealCard(CardValue.Seven, Suit.Hearts), this.model.getCardAt(5, 4));
     assertEquals(new RealCard(CardValue.Two, Suit.Hearts), this.model.getCardAt(4, 4));
-    assertFalse(this.model.getCardAt(4, 4).getVisibility());
     this.model.discard(5, 5);
     this.model.discard(5, 4);
     assertNull(this.model.getCardAt(5, 5));
     assertNull(this.model.getCardAt(5, 4));
-    assertTrue(this.model.getCardAt(4, 4).getVisibility());
     this.model.discard(4, 4);
     assertNull(this.model.getCardAt(4, 4));
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void updateVisiblityInvalidStateErrorTest() {
-    this.model.updateVisibility();
-  }
-
-  @Test
-  public void updateVisibilityTest() {
-    this.model.startGame(this.model.getDeck(), false, 3, 3);
-    // no removals
-    assertTrue(this.model.getCardAt(2, 0).getVisibility());
-    assertTrue(this.model.getCardAt(2, 1).getVisibility());
-    assertTrue(this.model.getCardAt(2, 2).getVisibility());
-    assertFalse(this.model.getCardAt(1, 0).getVisibility());
-    assertFalse(this.model.getCardAt(1, 1).getVisibility());
-    // remove bottom row
-    this.model.discard(2, 0);
-    this.model.discard(2, 1);
-    this.model.discard(2, 2);
-
-    assertTrue(this.model.getCardAt(1, 0).getVisibility());
-    assertTrue(this.model.getCardAt(1, 1).getVisibility());
   }
 
   @Test(expected = IllegalStateException.class)
