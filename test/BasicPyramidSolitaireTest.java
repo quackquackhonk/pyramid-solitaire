@@ -575,10 +575,21 @@ public class BasicPyramidSolitaireTest {
     // remove the first card
     this.model.remove(0, 0);
     assertTrue(this.model.isGameOver());
-    //this.model.startGame(this.model.getDeck(), false, 0, 10);
-    //assertFalse(this.model.isGameOver());
+    this.model.startGame(this.model.getDeck(), false, 1, 10);
+    assertFalse(this.model.isGameOver());
     this.model.startGame(this.model.getDeck(), false, 9, 5);
     assertFalse(this.model.isGameOver());
+
+    this.model.startGame(this.model.getDeck(), false, 3, 3);
+    assertFalse(this.model.isGameOver());
+    this.model.removeUsingDraw(0, 2, 2);
+    this.model.removeUsingDraw(1, 2, 1);
+    this.model.removeUsingDraw(2, 2, 0);
+    this.model.removeUsingDraw(0, 1, 1);
+    this.model.removeUsingDraw(1, 1, 0);
+    this.model.removeUsingDraw(2, 0, 0);
+    assertTrue(this.model.isGameOver());
+
   }
 
   // getScore tests

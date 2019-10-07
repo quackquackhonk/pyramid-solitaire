@@ -253,6 +253,11 @@ public class BasicPyramidSolitaire implements PyramidSolitaireModel<Card> {
       throw new IllegalStateException("Game not started");
     }
 
+    // if your score is 0, you win!
+    if (this.getScore() == 0) {
+      return true;
+    }
+
     // list of all cards playable by the player
     ArrayList<RealCard> playableCards = new ArrayList<RealCard>();
     for (int r = 0; r < this.getNumRows(); r++) { // row loop

@@ -3,19 +3,18 @@ package cs3500.pyramidsolitaire.controller;
 /**
  * Represents an expected output after a series of inputs.
  */
-public class PrintInteraction {
+public class PrintInteraction implements Interaction {
 
-  /**
-   * Appends expected output from a series of commands onto the out StringBuilder.
-   * @param lines the expected output.
-   * @return an Interaction having appended the expected output.
-   */
-  static Interaction prints(String... lines) {
-    return (input, output) -> {
-      for (String line : lines) {
-        output.append(line).append('\n');
-      }
-    };
+  String[] lines;
+  public PrintInteraction(String... lines) {
+    this.lines = lines;
   }
 
+
+  @Override
+  public void apply(StringBuilder in, StringBuilder out) {
+    for (String line : lines) {
+      out.append(line).append("\n");
+    }
+  }
 }

@@ -35,11 +35,11 @@ public class PyramidSolitaireTextualView  implements PyramidSolitaireView {
       return "";
     }
 
-    if (this.model.isGameOver() && this.model.getScore() == 0) {
-      return "You win!";
+    if ( /*this.model.isGameOver() && */this.model.getScore() == 0) {
+      return "You win!\n";
     }
     else if (this.model.isGameOver() && this.model.getScore() != 0) {
-      return "Game over. Score: " + this.model.getScore();
+      return "Game over. Score: " + this.model.getScore() + "\n";
     }
     else { // Game still going
 
@@ -97,6 +97,7 @@ public class PyramidSolitaireTextualView  implements PyramidSolitaireView {
 
 
       returnString += draw;
+      returnString += newLine;
     }
 
     return returnString;

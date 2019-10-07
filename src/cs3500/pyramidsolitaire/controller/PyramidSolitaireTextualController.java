@@ -2,6 +2,7 @@ package cs3500.pyramidsolitaire.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -50,19 +51,23 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
 
       Scanner scan = new Scanner(this.in);
 
-      while (!model.isGameOver()) {
+      while (true) {
         // show the player the current game state
         view.render();
-        this.out.append(String.format("Score: %d", model.getScore()) + "\n");
+        if (model.isGameOver()) {
+          return;
+        }
+        this.out.append(String.format("Score: %d", model.getScore())).append("\n");
 
         switch (scan.next()) {
           case "rm1":
             // row of card
-            commandArg1 = this.getQuitOrValue(scan);
+            if (isQuitCharacter(commandArg1 = this.getQuitOrValue(scan))) {
+              quitGame(model.getScore());
+              return;
+            }
             // position of card
-            commandArg2 = this.getQuitOrValue(scan);
-
-            if (areQuitCharacters(commandArg1, commandArg2)) {
+            if (isQuitCharacter(commandArg2 = this.getQuitOrValue(scan))) {
               quitGame(model.getScore());
               return;
             }
@@ -79,15 +84,22 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
             break;
           case "rm2":
             // row of card1
-            commandArg1 = this.getQuitOrValue(scan);
+            if (isQuitCharacter(commandArg1 = this.getQuitOrValue(scan))) {
+              quitGame(model.getScore());
+              return;
+            }
             // position of card1
-            commandArg2 = this.getQuitOrValue(scan);
+            if (isQuitCharacter(commandArg2 = this.getQuitOrValue(scan))) {
+              quitGame(model.getScore());
+              return;
+            }
             // row of card 2
-            commandArg3 = this.getQuitOrValue(scan);
+            if (isQuitCharacter(commandArg3 = this.getQuitOrValue(scan))) {
+              quitGame(model.getScore());
+              return;
+            }
             // position of card2
-            commandArg4 = this.getQuitOrValue(scan);
-
-            if (areQuitCharacters(commandArg1, commandArg2, commandArg3, commandArg4)) {
+            if (isQuitCharacter(commandArg4 = this.getQuitOrValue(scan))) {
               quitGame(model.getScore());
               return;
             }
@@ -106,14 +118,18 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
 
             break;
           case "rmwd":
-            // row of card
-            commandArg1 = this.getQuitOrValue(scan);
-            // position of the card
-            commandArg2 = this.getQuitOrValue(scan);
             // draw pile index
-            commandArg3 = this.getQuitOrValue(scan);
-
-            if (areQuitCharacters(commandArg1, commandArg2, commandArg3)) {
+            if (isQuitCharacter(commandArg1 = this.getQuitOrValue(scan))) {
+              quitGame(model.getScore());
+              return;
+            }
+            // row of card
+            if (isQuitCharacter(commandArg2 = this.getQuitOrValue(scan))) {
+              quitGame(model.getScore());
+              return;
+            }
+            // position of the card
+            if (isQuitCharacter(commandArg3 = this.getQuitOrValue(scan))) {
               quitGame(model.getScore());
               return;
             }
@@ -130,13 +146,10 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
             break;
           case "dd":
             // draw pile index
-            commandArg1 = this.getQuitOrValue(scan);
-
-            if (areQuitCharacters(commandArg1)) {
+            if (isQuitCharacter(commandArg1 = this.getQuitOrValue(scan))) {
               quitGame(model.getScore());
               return;
             }
-
             // parses all inputs into integers and subtracts 1 (for array access in the model)
             int drawIndex = Integer.parseInt(commandArg1) - 1;
 
@@ -148,8 +161,6 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
 
             break;
           case "q":
-            quitGame(model.getScore());
-            return;
           case "Q":
             quitGame(model.getScore());
             return;
@@ -159,10 +170,10 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
         }
 
       }
-
-      this.view.render();
     } catch (IOException e) {
       throw new IllegalStateException("Input or Output error");
+    } catch (NoSuchElementException e) {
+      throw new IllegalStateException("Reached the end of input");
     }
 
 
@@ -179,7 +190,7 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
     String qOrInt = scan.next();
 
     while (!this.isQOrInt(qOrInt)) {
-      this.out.append("Invalid value. Please enter a number or a Q or (q) \n");
+      this.out.append("Invalid value. Please enter a number, \'Q\', or \'q\'.\n");
       qOrInt = scan.next();
     }
 
@@ -223,19 +234,11 @@ public class PyramidSolitaireTextualController implements PyramidSolitaireContro
   /**
    * Checks if any of the given Strings are valid quit characters.
    *
-   * @param check the String(s) to check
+   * @param s the String to check
    * @return are any of the Strings quit characters?
    */
-  boolean areQuitCharacters(String... check) {
-    String[] checkStrings = check;
-
-    for (String s: checkStrings) {
-      if (s.toUpperCase().equals("Q")) {
-        return true;
-      }
-    }
-
-    return false;
+  boolean isQuitCharacter(String s) {
+    return s.toUpperCase().equals("Q");
   }
 
   /**

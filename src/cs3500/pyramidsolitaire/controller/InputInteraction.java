@@ -3,15 +3,15 @@ package cs3500.pyramidsolitaire.controller;
 /**
  * Represents a simulated input from the user.
  */
-public class InputInteraction {
+public class InputInteraction implements Interaction {
 
-  /**
-   * Appends the given input onto the simulated input StringBuilder.
-   * @param in a command input.
-   * @return an Interaction, having applied the given input.
-   */
-  static Interaction inputs(String in) {
-    return (input, output) -> input.append(in);
+  String input;
+  public InputInteraction(String input) {
+    this.input = input;
   }
 
+  @Override
+  public void apply(StringBuilder in, StringBuilder out) {
+    in.append(input);
+  }
 }
