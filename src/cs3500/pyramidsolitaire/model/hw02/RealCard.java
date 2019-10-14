@@ -63,15 +63,6 @@ public class RealCard implements Card {
 
 
   /**
-   * Determines if combining this card with the other card will allow a removal.
-   * @param other the other card
-   * @return true if the sums of the card values == 13, else false.
-   */
-  boolean canCombine(RealCard other) {
-    return this.value.getValue() + other.value.getValue() == 13;
-  }
-
-  /**
    * Returns a deep copy of this card.
    * @return a copy of this card
    */
