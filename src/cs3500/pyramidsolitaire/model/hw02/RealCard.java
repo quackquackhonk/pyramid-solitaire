@@ -61,13 +61,4 @@ public class RealCard implements Card {
     return this.value.getValue();
   }
 
-
-  /**
-   * Returns a deep copy of this card.
-   * @return a copy of this card
-   */
-  Card copy() {
-    return new RealCard(this.value, this.suit);
-  }
-
 }
