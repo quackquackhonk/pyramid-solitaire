@@ -1,9 +1,17 @@
-package cs3500.pyramidsolitaire.model.hw02;
+package cs3500.pyramidsolitaire.model.hw04;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.Random;
+
+import cs3500.pyramidsolitaire.model.hw02.BasicPyramidSolitaire;
+import cs3500.pyramidsolitaire.model.hw02.Card;
+import cs3500.pyramidsolitaire.model.hw02.CardValue;
+import cs3500.pyramidsolitaire.model.hw02.EmptyCard;
+import cs3500.pyramidsolitaire.model.hw02.RealCard;
+import cs3500.pyramidsolitaire.model.hw02.Suit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -56,7 +64,7 @@ public class BasicPyramidSolitaireOtherMethodTests {
   @Test
   public void discardTest() {
     this.model.startGame(this.model.getDeck(), false, 3, 3);
-    assertEquals(new RealCard(CardValue.Four, Suit.Spades), this.model.getCardAt(2, 0));
+    Assert.assertEquals(new RealCard(CardValue.Four, Suit.Spades), this.model.getCardAt(2, 0));
     this.model.discard(2, 0);
     assertNull(this.model.getCardAt(2, 0));
 
@@ -180,7 +188,7 @@ public class BasicPyramidSolitaireOtherMethodTests {
     assertEquals(new RealCard(CardValue.Four, Suit.Spades), this.model.deal());
 
     this.model.startGame(this.model.getDeck(), false, 9, 7);
-    assertEquals(new EmptyCard(), this.model.deal());
+    Assert.assertEquals(new EmptyCard(), this.model. deal());
     assertEquals(new EmptyCard(), this.model.deal());
     assertEquals(new EmptyCard(), this.model.deal());
     assertEquals(new EmptyCard(), this.model.deal());

@@ -73,7 +73,7 @@ public class PyramidSolitaireTextualView  implements PyramidSolitaireView {
           rowToAdd += " ";
         }
 
-        rowToAdd = rowToAdd.trim();
+        rowToAdd = rowToAdd.substring(0, rowToAdd.length() - 1);
 
         // adds the spaces before each row to line each row up
         String spacesToAdd = "";
