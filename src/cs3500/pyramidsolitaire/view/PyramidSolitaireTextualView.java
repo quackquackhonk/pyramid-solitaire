@@ -45,6 +45,7 @@ public class PyramidSolitaireTextualView  implements PyramidSolitaireView {
 
       String paddingBlock = "  ";
       int finalIndex = this.model.getNumRows() - 1;
+
       for (int r = 0; r < this.model.getNumRows(); r++) { // go through rows
 
         String rowToAdd = "";
@@ -60,6 +61,7 @@ public class PyramidSolitaireTextualView  implements PyramidSolitaireView {
 
             String cardToAddString = this.model.getCardAt(r, i).toString();
             int numCardsInRow = this.model.getRowWidth(r) - 1;
+
             if (i == numCardsInRow) {
               rowToAdd += cardToAddString;
             } else {

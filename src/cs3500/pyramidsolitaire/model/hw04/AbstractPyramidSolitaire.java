@@ -28,19 +28,44 @@ public abstract class AbstractPyramidSolitaire implements PyramidSolitaireModel<
   private ArrayList<Integer> indiciesDealt;
   private boolean ignoreOrder;
 
-  private final int SUM_TO_REMOVE = 13;
-  private final int NUM_CARDS_IN_DECK = 52;
-  private final int MIN_ROWS = 1;
-  private final int MAX_ROWS = 9;
-  private final int MIN_DRAW = 0;
+  private final int SUM_TO_REMOVE;
+  private final int NUM_CARDS_IN_DECK;
+  private final int MIN_ROWS;
+  private final int MAX_ROWS;
+  private final int MIN_DRAW;
 
   /**
-   * Constructs an AbstractPyramidSolitaire with the given seeded Random value;
-   * @param rand the seeded random value
+   * Constructs an AbstractPyramidSolitaire with the given seeded Random value and constant values.
+   * @param rand the seeded Random.
+   * @param sumRemove the value needed to combine two cards.
+   * @param deckCount the number of cards in a valid deck.
+   * @param minRows the minimum number of rows allowed.
+   * @param maxRows the maximum number of rows allowed.
+   * @param minDraw the minimum number of draw cards allowed.
+   */
+  public AbstractPyramidSolitaire(Random rand, int sumRemove, int deckCount, int minRows,
+                                  int maxRows, int minDraw) {
+    this.rand = rand;
+    this.gameStarted = false;
+    this.SUM_TO_REMOVE = sumRemove;
+    this.NUM_CARDS_IN_DECK = deckCount;
+    this.MIN_ROWS = minRows;
+    this.MAX_ROWS = maxRows;
+    this.MIN_DRAW = minDraw;
+  }
+
+  /**
+   * Constructs a AbstractPyramidSolitaire with the given seeded Random and default constant values
+   * @param rand the seeded Random.
    */
   public AbstractPyramidSolitaire(Random rand) {
     this.rand = rand;
     this.gameStarted = false;
+    this.SUM_TO_REMOVE = 13;
+    this.NUM_CARDS_IN_DECK = 52;
+    this.MIN_ROWS = 1;
+    this.MAX_ROWS = 9;
+    this.MIN_DRAW = 0;
   }
 
   @Override
@@ -81,22 +106,9 @@ public abstract class AbstractPyramidSolitaire implements PyramidSolitaireModel<
     // initializes the draw and discard piles;
     this.drawPile = new ArrayList<Card>();
 
-    // add rows to the board
-    for (int i = 0; i < this.getNumRows(); i++) {
-      this.board.add(new ArrayList<Card>());
-    }
-
     this.numDraw = numDraw;
 
-
-    // populate the board with cards
-    for (int i = 0; i < this.getNumRows(); i++) {
-      for (int j = 0; j < this.getRowWidth(i); j++) {
-
-        this.board.get(i).add(this.deal());
-
-      }
-    }
+    this.board = populate();
 
     // populate the draw pile with cards
     for (int i = 0; i < this.numDraw; i++) {
@@ -246,25 +258,7 @@ public abstract class AbstractPyramidSolitaire implements PyramidSolitaireModel<
       return true;
     }
 
-    // list of all cards playable by the player
-    ArrayList<RealCard> playableCards = new ArrayList<RealCard>();
-    for (int r = 0; r < this.getNumRows(); r++) { // row loop
-      for (int i = 0; i < this.getRowWidth(r); i++) { // card loop
-        Card c = this.getCardAt(r, i);
-
-        if (c != null && this.noCardsBeneath(r, i)) {
-          playableCards.add((RealCard) c);
-        }
-
-      }
-    }
-
-    // add all the playable cards from the draw pile into the list
-    for (Card c : this.getDrawCards()) {
-      if (!this.isEmpty(c)) {
-        playableCards.add((RealCard) c);
-      }
-    }
+    ArrayList<RealCard> playableCards = getPlayableCards();
 
     for (int x = 0; x < playableCards.size(); x++) { // loop through cards
       RealCard cx = playableCards.get(x);
@@ -437,7 +431,7 @@ public abstract class AbstractPyramidSolitaire implements PyramidSolitaireModel<
    */
   protected boolean isDeckValid(List<Card> deck) {
 
-    if (deck == null) {
+    if (deck == null || deck.size() != NUM_CARDS_IN_DECK) {
       return false;
     }
 
@@ -551,5 +545,64 @@ public abstract class AbstractPyramidSolitaire implements PyramidSolitaireModel<
     return c1.getIntegerValue() + c2.getIntegerValue() == SUM_TO_REMOVE;
   }
 
+  /**
+   * returns a board that is populated with cards from the deck.
+   * @return the board.
+   */
+  protected ArrayList<ArrayList<Card>> populate() {
+    ArrayList<ArrayList<Card>> retBoard = new ArrayList<ArrayList<Card>>();
 
+    // add rows to the board
+    for (int i = 0; i < this.getNumRows(); i++) {
+      retBoard.add(new ArrayList<Card>());
+    }
+
+    // populate the board with cards
+    for (int i = 0; i < this.getNumRows(); i++) {
+      for (int j = 0; j < this.getRowWidth(i); j++) {
+
+        retBoard.get(i).add(this.deal());
+
+      }
+    }
+
+    return retBoard;
+  }
+
+  /**
+   * Determines if the game has started.
+   * @return if the game has started.
+   */
+  protected boolean isGameStarted() {
+    return this.gameStarted;
+  }
+
+  /**
+   * Returns a list of all the playable cards in the model.
+   *
+   * @return list of all playable cards.
+   */
+  protected ArrayList<RealCard> getPlayableCards() {
+    // list of all cards playable by the player
+    ArrayList<RealCard> playableCards = new ArrayList<RealCard>();
+    for (int r = 0; r < this.getNumRows(); r++) { // row loop
+      for (int i = 0; i < this.getRowWidth(r); i++) { // card loop
+        Card c = this.getCardAt(r, i);
+
+        if (c != null && this.noCardsBeneath(r, i)) {
+          playableCards.add((RealCard) c);
+        }
+
+      }
+    }
+
+    // add all the playable cards from the draw pile into the list
+    for (Card c : this.getDrawCards()) {
+      if (!this.isEmpty(c)) {
+        playableCards.add((RealCard) c);
+      }
+    }
+
+    return playableCards;
+  }
 }

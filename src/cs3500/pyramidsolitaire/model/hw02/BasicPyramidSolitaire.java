@@ -1,7 +1,5 @@
 package cs3500.pyramidsolitaire.model.hw02;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import cs3500.pyramidsolitaire.model.hw04.AbstractPyramidSolitaire;
@@ -30,4 +28,5 @@ public class BasicPyramidSolitaire extends AbstractPyramidSolitaire implements P
   public BasicPyramidSolitaire(Random seedRand) {
     super(seedRand);
   }
+
 }
